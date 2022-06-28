@@ -1,0 +1,26 @@
+{
+  "name": "aries-ekyc",
+  "version": "1.0.0",
+  "description": "A NodeJS app that interacts with Hyperledger Aries to be used for a research on EKYC",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanjan-sj/aries-ekyc.git"
+  },
+  "author": "Umme Sumaya Jannat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tanjan-sj/aries-ekyc/issues"
+  },
+  "homepage": "https://github.com/tanjan-sj/aries-ekyc#readme",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.18"
+  }
+}
