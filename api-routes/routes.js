@@ -30,6 +30,7 @@ router.post('/send-invitation', async function (req, res, next) {
 });
 
 router.post('/issue-credential/send-offer', async function (req, res, next) {
+    console.log("issue cred api");
     const responseBody = {};
 
     let config = {
@@ -42,8 +43,39 @@ router.post('/issue-credential/send-offer', async function (req, res, next) {
     try{
         axios.post('http://localhost:8021/issue-credential/send-offer', JSON.stringify(req.body), config)
             .then(response => {
-                //console.log("response: ", response);
+                console.log("response: ", response.data);
                 responseBody.status = "successfully sent offer";
+                responseBody.cred_ex_id = response.data.credential_exchange_id;
+                responseBody.state = response.data.state;
+                res.status(200).json(responseBody);
+            })
+            .catch(error => {
+                console.log(error);
+                res.status(error.statusCode || 500).json({ message: error.message });
+            });
+    }catch(error){
+        console.log("--------------------------------------------------------------------------");
+        console.log(error);
+        res.status(error.statusCode || 500).json({ message: error.message });
+    }
+});
+
+
+router.get('/issue-credential/cred-def-id', async function (req, res, next) {
+    const responseBody = {};
+    const schemaName = req.query.schema_name;
+
+    let config = {
+        headers: {
+            'accept': 'application/json',
+        }
+    }
+
+    try{
+        axios.get('http://localhost:8021/credential-definitions/created', {params: {schema_name: schemaName}}, config)
+            .then(response => {
+                responseBody.status = "successfully fetched cred_def_id";
+                responseBody.credential_definition_id = response.data.credential_definition_ids[0];
                 res.status(200).json(responseBody);
             })
             .catch(error => {
@@ -55,6 +87,35 @@ router.post('/issue-credential/send-offer', async function (req, res, next) {
         res.status(error.statusCode || 500).json({ message: error.message });
     }
 });
+
+router.get('/issue-credential/check-status', async function (req, res, next) {
+    const responseBody = {};
+    const schemaName = req.query.cred_ex_id;
+
+    console.log("in issueeee");
+
+    let config = {
+        headers: {
+            'accept': 'application/json',
+        }
+    }
+
+    try{
+        axios.get('http://localhost:8021/issue-credential/records/' + schemaName, config)
+            .then(response => {
+                responseBody.state = response.data.state;
+                res.status(200).json(responseBody);
+            })
+            .catch(error => {
+                console.log(error);
+                res.status(error.statusCode || 500).json({ message: error.message });
+            });
+    }catch(error){
+        console.log(error);
+        res.status(error.statusCode || 500).json({ message: error.message });
+    }
+});
+
 
 router.post('/proof/send-request', async function (req, res, next) {
     const responseBody = {};
